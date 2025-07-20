@@ -31,6 +31,7 @@ export function LoginForm() {
         body: JSON.stringify({
           correo: email.toLowerCase(),
           contrasena: password,
+          recordar: rememberMe, // <-- Agrega esto
         }),
       })
 
@@ -40,8 +41,11 @@ export function LoginForm() {
         throw new Error(data.error || "Error en el inicio de sesión")
       }
 
-      // Puedes guardar el usuario en localStorage/sessionStorage si lo necesitas
-      // localStorage.setItem("user", JSON.stringify(data.user))
+      // Guarda el token en localStorage
+      if (data.token) {
+        localStorage.setItem("token", data.token)
+        console.log("JWT recibido:", data.token)
+      }
 
       alert("Inicio de sesión exitoso")
       router.push("/dashboard")

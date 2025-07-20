@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -23,21 +24,70 @@ import Image from "next/image"
 import Link from "next/link"
 import { PricingSection } from "@/components/pricing-section"
 import { ContactSection } from "@/components/contact-section"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { LogOut, User, Home as HomeIcon } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function LandingPage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState("")
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    if (token) {
+      setIsLoggedIn(true)
+      // Obtener el nombre del usuario desde la API
+      fetch("http://localhost:4001/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(async (res) => {
+          if (!res.ok) throw new Error()
+          const data = await res.json()
+          setUserName(data.user?.nombre ? `${data.user.nombre} ${data.user.apellido}` : "Usuario")
+        })
+        .catch(() => {
+          setIsLoggedIn(false)
+          setUserName("")
+          localStorage.removeItem("token")
+        })
+    } else {
+      setIsLoggedIn(false)
+      setUserName("")
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsLoggedIn(false)
+    setUserName("")
+    router.push("/")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Navigation */}
       <nav className="relative z-50 bg-white/10 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Logo y Nombre */}
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <Home className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">SmartHome</span>
+              <span className="text-xl font-bold text-white">WorkSpace</span>
             </div>
 
+            {/* Enlaces de Navegación */}
             <div className="hidden md:flex items-center space-x-8">
               <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
                 Características
@@ -53,19 +103,57 @@ export default function LandingPage() {
               </Link>
             </div>
 
+            {/* Botones de Inicio de Sesión y Registro / Menú de Usuario */}
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-white hover:bg-white/10" asChild>
-                <Link href="/login">Iniciar Sesión</Link>
-              </Button>
-              <Button
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                asChild
-              >
-                <Link href="/signup">Comenzar</Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="md:hidden text-white">
-                <Menu className="w-5 h-5" />
-              </Button>
+              {!isLoggedIn ? (
+                <>
+                  <Button variant="ghost" className="text-white hover:bg-white/10" asChild>
+                    <Link href="/login">Iniciar Sesión</Link>
+                  </Button>
+                  <Button
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                    asChild
+                  >
+                    <Link href="/signup">Comenzar</Link>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="md:hidden text-white">
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </>
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center space-x-2 text-white hover:bg-white/10">
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src="/placeholder.svg?height=32&width=32" />
+                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                          {userName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="hidden sm:block">{userName}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-slate-800 border-white/20">
+                    <DropdownMenuLabel className="text-white">Mi Cuenta</DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-white/20" />
+                    <DropdownMenuItem
+                      className="text-gray-300 hover:bg-white/10"
+                      onClick={() => router.push("/dashboard")}
+                    >
+                      <HomeIcon className="mr-2 w-4 h-4" />
+                      Ir a mi Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-white/20" />
+                    <DropdownMenuItem
+                      className="text-red-400 hover:bg-red-500/10"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="mr-2 w-4 h-4" />
+                      Cerrar Sesión
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </div>
@@ -129,7 +217,7 @@ export default function LandingPage() {
               <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
                 <Image
                   src="/room.jpg?height=400&width=500"
-                  alt="Panel de Control SmartHome"
+                  alt="Panel de Control WorkSpace"
                   width={700}
                   height={400}
                   className="rounded-2xl"
@@ -355,7 +443,7 @@ export default function LandingPage() {
               ¿Por Qué Elegir
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 {" "}
-                SmartHome?
+                WorkSpace?
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -426,7 +514,7 @@ export default function LandingPage() {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <Home className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">SmartHome</span>
+                <span className="text-xl font-bold text-white">WorkSpace</span>
               </div>
               <p className="text-gray-300">
                 Transformando hogares en espacios de vida inteligentes con tecnología de automatización de vanguardia.
@@ -525,7 +613,7 @@ export default function LandingPage() {
 
           <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-300 text-sm">
-              © {new Date().getFullYear()} SmartHome. Todos los derechos reservados.
+              © {new Date().getFullYear()} WorkSpace. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">

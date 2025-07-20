@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Home, Settings, Smartphone, CreditCard, LogOut, Bell, Menu, X, User, HelpCircle } from "lucide-react"
 import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 
 interface DashboardHeaderProps {
   userName: string
@@ -21,13 +22,21 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ userName }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname() // <-- Obtén la ruta actual
 
   const navigationItems = [
-    { name: "Panel de Control", href: "/dashboard", icon: Home, active: true },
+    { name: "Panel de Control", href: "/dashboard", icon: Home },
     { name: "Gestionar Escenarios", href: "/dashboard/scenarios", icon: Settings },
     { name: "Control de Dispositivos", href: "/dashboard/devices", icon: Smartphone },
     { name: "Planes y Facturación", href: "/dashboard/billing", icon: CreditCard },
   ]
+
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("token") // Elimina el JWT
+    router.push("/") // Redirige a la landing page
+  }
 
   return (
     <header className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
@@ -38,19 +47,25 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Home className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">SmartHome</span>
+            <span className="text-xl font-bold text-white">WorkSpace</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navigationItems.map((item) => {
               const IconComponent = item.icon
+              let isActive = false
+              if (item.href === "/dashboard") {
+                isActive = pathname === "/dashboard"
+              } else {
+                isActive = pathname.startsWith(item.href)
+              }
               return (
                 <Link
                   key={item.name}
                   href={item.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-                    item.active ? "bg-white/20 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
+                    isActive ? "bg-white/20 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   <IconComponent className="w-4 h-4" />
@@ -125,7 +140,10 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
                   Ayuda y Soporte
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/20" />
-                <DropdownMenuItem className="text-red-400 hover:bg-red-500/10">
+                <DropdownMenuItem
+                  className="text-red-400 hover:bg-red-500/10"
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-2 w-4 h-4" />
                   Cerrar Sesión
                 </DropdownMenuItem>
@@ -150,12 +168,18 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             <nav className="space-y-2">
               {navigationItems.map((item) => {
                 const IconComponent = item.icon
+                let isActive = false
+                if (item.href === "/dashboard") {
+                  isActive = pathname === "/dashboard"
+                } else {
+                  isActive = pathname.startsWith(item.href)
+                }
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-                      item.active ? "bg-white/20 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
+                      isActive ? "bg-white/20 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
