@@ -47,7 +47,7 @@ export default function LandingPage() {
     if (token) {
       setIsLoggedIn(true)
       // Obtener el nombre del usuario desde la API
-      fetch("http://localhost:4001/auth/me", {
+      fetch("https://workspaceapi-b81x.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {

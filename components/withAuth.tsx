@@ -16,7 +16,7 @@ export function withAuth<P>(WrappedComponent: React.ComponentType<P>) {
       }
 
       // Opcional: Validar el token y obtener datos del usuario
-      fetch("http://localhost:4001/auth/me", {
+      fetch("https://workspaceapi-b81x.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(async (res) => {
