@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -12,30 +12,49 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { Home, Settings, Smartphone, CreditCard, LogOut, Bell, Menu, X, User, HelpCircle } from "lucide-react"
+import { Home, Settings, Smartphone, CreditCard, LogOut, Bell, Menu, X, User, HelpCircle, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
+import { jwtDecode } from 'jwt-decode'
 
 interface DashboardHeaderProps {
   userName: string
 }
 
+interface JwtPayload {
+  idobject: string
+  // Agrega aquí otras propiedades que contenga tu token JWT
+}
+
 export function DashboardHeader({ userName }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userIdObject, setUserIdObject] = useState<string | null>(null)
   const router = useRouter()
-  const pathname = usePathname() // <-- Obtén la ruta actual
+  const pathname = usePathname()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded = jwtDecode<JwtPayload>(token)
+        setUserIdObject(decoded.idobject)
+      } catch (err) {
+        console.error("Error decoding token:", err)
+        setUserIdObject(null)
+      }
+    }
+  }, [])
 
   const navigationItems = [
     { name: "Panel de Control", href: "/dashboard", icon: Home },
-    { name: "Gestionar Escenarios", href: "/dashboard/scenarios", icon: Settings },
-    { name: "Control de Dispositivos", href: "/dashboard/devices", icon: Smartphone },
+    { name: "Gestionar Escenarios", href: "/dashboard/environments", icon: Settings },
     { name: "Planes y Facturación", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Analíticas", href: "/dashboard/analytics", icon: BarChart3 },
   ]
 
-  // Función para cerrar sesión
   const handleLogout = () => {
-    localStorage.removeItem("token") // Elimina el JWT
-    router.push("/") // Redirige a la landing page
+    localStorage.removeItem("token")
+    router.push("/")
   }
 
   return (
@@ -54,12 +73,10 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
           <nav className="hidden md:flex items-center space-x-8">
             {navigationItems.map((item) => {
               const IconComponent = item.icon
-              let isActive = false
-              if (item.href === "/dashboard") {
-                isActive = pathname === "/dashboard"
-              } else {
-                isActive = pathname.startsWith(item.href)
-              }
+              const isActive = item.href === "/dashboard" 
+                ? pathname === "/dashboard" 
+                : pathname.startsWith(item.href)
+              
               return (
                 <Link
                   key={item.name}
@@ -168,12 +185,10 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             <nav className="space-y-2">
               {navigationItems.map((item) => {
                 const IconComponent = item.icon
-                let isActive = false
-                if (item.href === "/dashboard") {
-                  isActive = pathname === "/dashboard"
-                } else {
-                  isActive = pathname.startsWith(item.href)
-                }
+                const isActive = item.href === "/dashboard" 
+                  ? pathname === "/dashboard" 
+                  : pathname.startsWith(item.href)
+                
                 return (
                   <Link
                     key={item.name}

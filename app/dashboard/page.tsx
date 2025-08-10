@@ -4,9 +4,11 @@ import { DashboardStats } from "@/components/dashboard/dashboard-stats"
 import { AutomationScenarios } from "@/components/dashboard/automation-scenarios"
 import { QuickControls } from "@/components/dashboard/quick-controls"
 import { withAuth } from "@/components/withAuth"
+import { EnvironmentsProvider } from "@/components/dashboard/environments-context"
 
 function DashboardPage({ user }: { user: any }) {
   const userName = user?.nombre ? `${user.nombre} ${user.apellido}` : "Usuario"
+  const userId = user?._id || user?.id || user?.userId || null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -22,18 +24,20 @@ function DashboardPage({ user }: { user: any }) {
           </p>
         </div>
         {/* Main Dashboard Grid */}
-        <div className="space-y-8">
-          <DashboardStats />
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-8">
-              <AutomationScenarios />
-            </div>
-            <div className="space-y-8">
-              <QuickControls />
-              {/* <NotificationsPanel />  <-- Elimina o comenta esta línea */}
+        <EnvironmentsProvider userId={userId}>
+          <div className="space-y-8">
+            <DashboardStats />
+            <div className="grid gap-8 lg:grid-cols-3">
+              <div className="lg:col-span-2 space-y-8">
+                <AutomationScenarios userId={userId} />
+              </div>
+              <div className="space-y-8">
+                <QuickControls userId={userId} />
+                {/* <NotificationsPanel />  <-- Elimina o comenta esta línea */}
+              </div>
             </div>
           </div>
-        </div>
+        </EnvironmentsProvider>
       </main>
     </div>
   )

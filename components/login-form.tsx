@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { jwtDecode } from 'jwt-decode'
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,7 @@ export function LoginForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("https://workspaceapi-b81x.onrender.com/login", {
+      const response = await fetch("http://localhost:4001/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,6 +46,16 @@ export function LoginForm() {
       if (data.token) {
         localStorage.setItem("token", data.token)
         console.log("JWT recibido:", data.token)
+
+        // Decodifica el token y guarda el userId
+        try {
+          const decoded: any = jwtDecode(data.token)
+          // Cambia "userId" por el nombre real del campo, por ejemplo "_id" si tu backend lo envía así
+          localStorage.setItem("userId", decoded.userId || decoded._id || decoded.id)
+          console.log("User ID guardado:", decoded.userId || decoded._id || decoded.id)
+        } catch (err) {
+          console.error("Error decodificando el token:", err)
+        }
       }
 
       alert("Inicio de sesión exitoso")
