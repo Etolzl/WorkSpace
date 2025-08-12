@@ -5,6 +5,7 @@ import { AutomationScenarios } from "@/components/dashboard/automation-scenarios
 import { QuickControls } from "@/components/dashboard/quick-controls"
 import { withAuth } from "@/components/withAuth"
 import { EnvironmentsProvider } from "@/components/dashboard/environments-context"
+import { SensorsProvider } from "@/components/dashboard/sensors-context"
 
 function DashboardPage({ user }: { user: any }) {
   const userName = user?.nombre ? `${user.nombre} ${user.apellido}` : "Usuario"
@@ -12,7 +13,7 @@ function DashboardPage({ user }: { user: any }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <DashboardHeader userName={userName} />
+      <DashboardHeader userName={userName} userRole={user?.rol} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Message */}
         <div className="mb-8">
@@ -25,18 +26,20 @@ function DashboardPage({ user }: { user: any }) {
         </div>
         {/* Main Dashboard Grid */}
         <EnvironmentsProvider userId={userId}>
-          <div className="space-y-8">
-            <DashboardStats />
-            <div className="grid gap-8 lg:grid-cols-3">
-              <div className="lg:col-span-2 space-y-8">
-                <AutomationScenarios userId={userId} />
-              </div>
-              <div className="space-y-8">
-                <QuickControls userId={userId} />
-                {/* <NotificationsPanel />  <-- Elimina o comenta esta línea */}
+          <SensorsProvider>
+            <div className="space-y-8">
+              <DashboardStats />
+              <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-8">
+                  <AutomationScenarios userId={userId} />
+                </div>
+                <div className="space-y-8">
+                  <QuickControls userId={userId} />
+                  {/* <NotificationsPanel />  <-- Elimina o comenta esta línea */}
+                </div>
               </div>
             </div>
-          </div>
+          </SensorsProvider>
         </EnvironmentsProvider>
       </main>
     </div>

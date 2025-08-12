@@ -10,11 +10,10 @@ import {
   BarChart3,
   Smartphone,
   Calendar,
-  CreditCard,
-  Wallet,
-  Bitcoin,
   ChevronDown,
+  ArrowRight,
 } from "lucide-react"
+import Link from "next/link"
 
 const pricingPlans = [
   {
@@ -36,7 +35,7 @@ const pricingPlans = [
       "Integraciones personalizadas",
       "Acceso multiusuario",
     ],
-    buttonText: "Empezar gratis",
+    buttonText: "Comenzar Gratis",
     popular: false,
     icon: Smartphone,
   },
@@ -59,7 +58,7 @@ const pricingPlans = [
       "Funciones de seguridad avanzadas",
       "Acceso a API",
     ],
-    buttonText: "Elegir Estándar",
+    buttonText: "Comenzar Estándar",
     popular: true,
     icon: Calendar,
   },
@@ -80,7 +79,7 @@ const pricingPlans = [
       "Opciones de marca blanca",
     ],
     notIncluded: [],
-    buttonText: "Elegir Premium",
+    buttonText: "Comenzar Premium",
     popular: false,
     icon: BarChart3,
   },
@@ -167,15 +166,17 @@ export function PricingSection() {
                     ))}
                   </div>
 
-                  <Button
-                    className={`w-full font-semibold py-3 transition-all duration-300 ${
-                      plan.popular
-                        ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/25"
-                        : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                    }`}
-                  >
-                    {plan.buttonText}
-                  </Button>
+                                     <Link href="/signup">
+                    <Button
+                      className={`w-full font-semibold py-3 transition-all duration-300 ${
+                        plan.popular
+                          ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/25"
+                          : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                      }`}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             )
@@ -246,19 +247,35 @@ export function PricingSection() {
         <div className="text-center mt-12">
           <p className="text-gray-300 mb-6">Aceptamos pagos con:</p>
           <div className="flex justify-center items-center space-x-8">
-            <div className="flex items-center space-x-2 text-gray-300">
-              <CreditCard className="w-6 h-6" />
+            <div className="text-gray-300">
               <span>Tarjeta de crédito</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-300">
-              <Wallet className="w-6 h-6" />
+            <div className="text-gray-300">
               <span>PayPal</span>
             </div>
-            <div className="flex items-center space-x-2 text-gray-300">
-              <Bitcoin className="w-6 h-6" />
+            <div className="text-gray-300">
               <span>Criptomonedas</span>
             </div>
           </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-16">
+          <h3 className="text-2xl font-bold text-white mb-4">
+            ¿No estás seguro de qué plan elegir?
+          </h3>
+          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+            Comienza con el plan gratuito y actualiza cuando lo necesites. No hay compromisos a largo plazo.
+          </p>
+          <Link href="/signup">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8"
+            >
+              Comenzar Prueba Gratuita
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

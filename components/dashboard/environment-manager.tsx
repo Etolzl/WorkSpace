@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus, Settings, Play, Pause, Calendar, Music, Thermometer, Lightbulb, Lock, Camera, Wifi, Volume2, Edit, Trash2, Eye, Clock, CheckCircle, XCircle, CalendarClock } from 'lucide-react'
+import { Plus, Settings, Play, Pause, Calendar, Music, Thermometer, Lightbulb, Lock, Camera, Wifi, Volume2, Edit, Trash2, Eye, Clock, CheckCircle, XCircle, CalendarClock, Fan, AirVent, Droplets, VenetianMask, Wind } from 'lucide-react'
 import { jwtDecode } from 'jwt-decode'
 
 interface Environment {
@@ -76,26 +76,36 @@ export function EnvironmentManager() {
   const [userId, setUserId] = useState<string>("")
 
   const availableSensors: Sensor[] = [
+    // Existing sensors
+    { id: "light_001", name: "Luz Habitación", type: "LIGHT", icon: Lightbulb, location: "Habitación" },
+    { id: "light_002", name: "Luz Sala", type: "LIGHT", icon: Lightbulb, location: "Sala" },
+    { id: "light_003", name: "Luz Cocina", type: "LIGHT", icon: Lightbulb, location: "Cocina" },
+    
+    // New sensor types
+    { id: "fan_001", name: "Ventilador Principal", type: "FAN", icon: Fan, location: "Habitación" },
+    { id: "fan_002", name: "Ventilador Secundario", type: "FAN", icon: Fan, location: "Sala" },
+    { id: "ac_001", name: "Aire Acondicionado Principal", type: "AIR_CONDITIONER", icon: AirVent, location: "Habitación" },
+    { id: "ac_002", name: "Aire Acondicionado Sala", type: "AIR_CONDITIONER", icon: AirVent, location: "Sala" },
+    { id: "ac_003", name: "Aire Acondicionado Oficina", type: "AIR_CONDITIONER", icon: AirVent, location: "Oficina" },
+    { id: "humid_001", name: "Sensor Humedad Habitación", type: "HUMIDITY_SENSOR", icon: Droplets, location: "Habitación" },
+    { id: "humid_002", name: "Sensor Humedad Sala", type: "HUMIDITY_SENSOR", icon: Droplets, location: "Sala" },
+    { id: "curtain_001", name: "Cortinas Principales", type: "CURTAIN", icon: VenetianMask, location: "Habitación" },
+    { id: "curtain_002", name: "Cortinas Sala", type: "CURTAIN", icon: VenetianMask, location: "Sala" },
+    { id: "purifier_001", name: "Purificador Aire Habitación", type: "AIR_PURIFIER", icon: Wind, location: "Habitación" },
+    { id: "purifier_002", name: "Purificador Aire Sala", type: "AIR_PURIFIER", icon: Wind, location: "Sala" },
+    
+    // Existing other sensors
     { id: "temp_001", name: "Termostato Sala", type: "TEMPERATURE_SENSOR", icon: Thermometer, location: "Sala" },
-    { id: "light_001", name: "Luces Sala", type: "LIGHT", icon: Lightbulb, location: "Sala" },
     { id: "audio_001", name: "Audio Sala", type: "SMART_PLUG", icon: Volume2, location: "Sala" },
-    { id: "temp_002", name: "Termostato Recámara", type: "TEMPERATURE_SENSOR", icon: Thermometer, location: "Recámara" },
-    { id: "light_002", name: "Luces Recámara", type: "LIGHT", icon: Lightbulb, location: "Recámara" },
-    { id: "light_003", name: "Luces Cocina", type: "LIGHT", icon: Lightbulb, location: "Cocina" },
-    { id: "audio_002", name: "Audio Cocina", type: "SMART_PLUG", icon: Volume2, location: "Cocina" },
     { id: "camera_001", name: "Cámara Entrada", type: "MOTION_SENSOR", icon: Camera, location: "Entrada" },
-    { id: "temp_003", name: "Termostato Oficina", type: "TEMPERATURE_SENSOR", icon: Thermometer, location: "Oficina" },
-    { id: "light_004", name: "Luces Oficina", type: "LIGHT", icon: Lightbulb, location: "Oficina" },
-    { id: "audio_003", name: "Audio Oficina", type: "SMART_PLUG", icon: Volume2, location: "Oficina" },
   ]
 
   const availablePlaylists: Playlist[] = [
-    { id: "playlist_001", name: "Relajación", description: "Música suave y luces tenues", duration: "2h" },
-    { id: "playlist_002", name: "Fiesta", description: "Música energética y luces dinámicas", duration: "4h" },
-    { id: "playlist_003", name: "Dormir", description: "Sonidos relajantes y luces mínimas", duration: "8h" },
-    { id: "playlist_004", name: "Concentración", description: "Música instrumental y luz natural", duration: "6h" },
-    { id: "playlist_005", name: "Mañana", description: "Música energizante y luces brillantes", duration: "1h" },
-    { id: "playlist_006", name: "Romántico", description: "Música suave y luces cálidas", duration: "3h" },
+    { id: "1", name: "Relajante", description: "Música relajante para concentración", duration: "2h" },
+    { id: "2", name: "Energizante", description: "Música para mantener la energía", duration: "1h" },
+    { id: "3", name: "Fondo", description: "Música ambiental de fondo", duration: "4h" },
+    { id: "4", name: "Clásica", description: "Música clásica para trabajar", duration: "3h" },
+    { id: "5", name: "Naturaleza", description: "Sonidos de la naturaleza", duration: "8h" },
   ]
 
   const getStatusColor = (status: string) => {
@@ -147,17 +157,48 @@ export function EnvironmentManager() {
 
   const fetchEnvironments = async () => {
     try {
-      const res = await fetch("http://localhost:4001/entornos")
+      const token = localStorage.getItem("token")
+      if (!token) {
+        console.error("❌ No hay token de autenticación")
+        return
+      }
+
+      console.log("🔍 Obteniendo entornos para userId:", userId)
+      
+      const res = await fetch("http://localhost:4001/entornos", {
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        }
+      })
+      
+      if (!res.ok) {
+        throw new Error(`Error al obtener entornos: ${res.status}`)
+      }
+      
       const data = await res.json()
-      setEnvironments(data)
+      console.log("📦 Datos recibidos del backend:", data)
+      
+      // Filtrar entornos solo del usuario autenticado
+      if (Array.isArray(data)) {
+        const userEnvironments = data.filter(env => env.usuario === userId)
+        console.log(`✅ Total entornos: ${data.length}, Entornos del usuario: ${userEnvironments.length}`)
+        console.log("🔍 Entornos filtrados:", userEnvironments)
+        setEnvironments(userEnvironments)
+      } else {
+        console.error("❌ Formato de respuesta inesperado:", data)
+        setEnvironments([])
+      }
     } catch (error) {
-      console.error("Error al obtener entornos:", error)
+      console.error("❌ Error al obtener entornos:", error)
+      setEnvironments([])
     }
   }
 
   useEffect(() => {
-    fetchEnvironments()
-  }, [])
+    if (userId) {
+      fetchEnvironments()
+    }
+  }, [userId])
 
   const diasSemanaMap: Record<string, string> = {
     "lunes": "Lunes",
@@ -374,21 +415,26 @@ export function EnvironmentManager() {
 
   // Obtener ID del usuario al cargar el componente
   useEffect(() => {
-    // Obtén el userId directamente del localStorage
-    const storedUserId = localStorage.getItem("userId")
-    if (storedUserId) {
-      setUserId(storedUserId)
-    } else {
-      // Si no existe, intenta decodificar el token como respaldo
-      const token = localStorage.getItem("token")
-      if (token) {
-        try {
-          const decoded: any = jwtDecode(token)
-          setUserId(decoded.userId || decoded._id || decoded.id)
-        } catch (error) {
-          console.error("Error decodificando token:", error)
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token)
+        console.log("=== DEBUG ENVIRONMENT MANAGER ===")
+        console.log("Token decodificado:", decoded)
+        // Priorizar el ID del JWT decodificado
+        const tokenUserId = decoded.id || decoded.userId || decoded._id
+        if (tokenUserId) {
+          console.log("✅ UserId obtenido del JWT:", tokenUserId)
+          setUserId(tokenUserId)
+        } else {
+          console.error("❌ No se pudo obtener userId del JWT:", decoded)
         }
+        console.log("================================")
+      } catch (error) {
+        console.error("Error decodificando token:", error)
       }
+    } else {
+      console.error("No hay token disponible")
     }
   }, [])
 

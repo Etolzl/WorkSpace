@@ -5,7 +5,7 @@ import Script from "next/script"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { withAuth } from "@/components/withAuth"
+import { withAdminAuth } from "@/components/withAdminAuth"
 import { Badge } from "@/components/ui/badge"
 import { RefreshCw } from "lucide-react"
 
@@ -194,7 +194,7 @@ function AnalyticsPage({ user }: { user: any }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <DashboardHeader userName={userName} />
+      <DashboardHeader userName={userName} userRole={user?.rol} />
 
       {/* External libs */}
       <Script id="bokeh-js" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.7.3.min.js" strategy="afterInteractive" />
@@ -304,6 +304,6 @@ function AnalyticsPage({ user }: { user: any }) {
   )
 }
 
-export default withAuth(AnalyticsPage)
+export default withAdminAuth(AnalyticsPage)
 
 

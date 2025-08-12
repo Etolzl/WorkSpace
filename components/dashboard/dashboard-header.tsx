@@ -19,6 +19,7 @@ import { jwtDecode } from 'jwt-decode'
 
 interface DashboardHeaderProps {
   userName: string
+  userRole?: string
 }
 
 interface JwtPayload {
@@ -26,7 +27,7 @@ interface JwtPayload {
   // Agrega aquí otras propiedades que contenga tu token JWT
 }
 
-export function DashboardHeader({ userName }: DashboardHeaderProps) {
+export function DashboardHeader({ userName, userRole }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userIdObject, setUserIdObject] = useState<string | null>(null)
   const router = useRouter()
@@ -45,12 +46,23 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
     }
   }, [])
 
-  const navigationItems = [
-    { name: "Panel de Control", href: "/dashboard", icon: Home },
-    { name: "Gestionar Escenarios", href: "/dashboard/environments", icon: Settings },
-    { name: "Planes y Facturación", href: "/dashboard/billing", icon: CreditCard },
-    { name: "Analíticas", href: "/dashboard/analytics", icon: BarChart3 },
-  ]
+  // Navegación basada en roles
+  const getNavigationItems = () => {
+    if (userRole === 'admin') {
+      return [
+        { name: "Analíticas", href: "/dashboard/analytics", icon: BarChart3 },
+        { name: "Gestión", href: "/dashboard/admin", icon: Settings },
+      ]
+    } else {
+      return [
+        { name: "Panel de Control", href: "/dashboard", icon: Home },
+        { name: "Gestionar Escenarios", href: "/dashboard/environments", icon: Settings },
+        { name: "Planes y Facturación", href: "/dashboard/billing", icon: CreditCard },
+      ]
+    }
+  }
+
+  const navigationItems = getNavigationItems()
 
   const handleLogout = () => {
     localStorage.removeItem("token")

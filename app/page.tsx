@@ -185,21 +185,38 @@ export default function LandingPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8"
-                >
-                  Comenzar Prueba Gratuita
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 text-lg px-8 bg-transparent"
-                >
-                  <Play className="mr-2 w-5 h-5" />
-                  Ver Demo
-                </Button>
+                <Link href="/signup">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8"
+                  >
+                    Comenzar Prueba Gratuita
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                {isLoggedIn ? (
+                  <Link href="/dashboard">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-white/20 text-white hover:bg-white/10 text-lg px-8 bg-transparent"
+                    >
+                      <Play className="mr-2 w-5 h-5" />
+                      Ir al Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/signup">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-white/20 text-white hover:bg-white/10 text-lg px-8 bg-transparent"
+                    >
+                      <Play className="mr-2 w-5 h-5" />
+                      Ver Demo
+                    </Button>
+                  </Link>
+                )}
               </div>
 
               <div className="flex items-center space-x-8 text-sm text-gray-400">
