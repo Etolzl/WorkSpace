@@ -56,8 +56,34 @@ export function LoginForm() {
         } catch (err) {
           console.error("Error decodificando el token:", err)
         }
+
+        // Guardar datos del usuario para uso offline
+        if (data.user) {
+          const { authOffline } = await import("@/lib/auth-offline")
+          authOffline.saveUserData(data.user)
+        }
       }
 
+      // Marcar que el usuario acaba de iniciar sesión para mostrar el prompt de notificaciones
+      sessionStorage.setItem('just-logged-in', 'true')
+      
+      // Intentar suscribirse automáticamente a notificaciones push si tiene permisos
+      // Esto se hace en segundo plano sin bloquear el flujo de login
+      setTimeout(async () => {
+        try {
+          const { autoSubscribeToPushNotifications } = await import("@/lib/auto-subscribe-push");
+          const result = await autoSubscribeToPushNotifications();
+          if (result.success) {
+            console.log('✅ Suscripción automática a notificaciones push:', result.message);
+          } else if (!result.alreadySubscribed) {
+            console.log('ℹ️ Suscripción automática no realizada:', result.message);
+          }
+        } catch (error) {
+          console.warn('Error en suscripción automática:', error);
+          // No mostrar error al usuario, es opcional
+        }
+      }, 2000); // Esperar 2 segundos después del login
+      
       alert("Inicio de sesión exitoso")
       router.push("/dashboard")
     } catch (error: any) {

@@ -66,8 +66,11 @@ export default function LandingPage() {
     }
   }, [])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("token")
+    // Limpiar datos del usuario guardados
+    const { authOffline } = await import("@/lib/auth-offline")
+    authOffline.clearUserData()
     setIsLoggedIn(false)
     setUserName("")
     router.push("/")

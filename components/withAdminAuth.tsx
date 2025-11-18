@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { authOffline } from "@/lib/auth-offline"
 
 export function withAdminAuth<P>(WrappedComponent: React.ComponentType<P>) {
   return function AdminProtectedComponent(props: P) {
@@ -15,31 +16,42 @@ export function withAdminAuth<P>(WrappedComponent: React.ComponentType<P>) {
         return
       }
 
-      // Validar el token y obtener datos del usuario
-      fetch("http://localhost:4001/auth/me", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(async (res) => {
-          if (!res.ok) throw new Error("No autorizado")
-          const data = await res.json()
-          setUser(data.user)
+      // Validar el token y obtener datos del usuario (con soporte offline)
+      authOffline.validateToken(token)
+        .then(({ user: userData, fromCache }) => {
+          setUser(userData)
           
           console.log("=== DEBUG ADMIN AUTH ===")
-          console.log("Usuario:", data.user.nombre, "Rol:", data.user.rol)
+          console.log("Usuario:", userData.nombre, "Rol:", userData.rol)
+          console.log("Desde cache:", fromCache)
           console.log("=========================")
           
           // Verificar que el usuario sea administrador
-          if (data.user.rol !== 'admin') {
+          // Solo redirigir si NO estamos usando cache (para evitar problemas cuando offline)
+          if (userData.rol !== 'admin' && !fromCache) {
             console.log("❌ Usuario no es admin, redirigiendo a dashboard")
             router.replace("/dashboard")
             return
           }
           
-          console.log("✅ Usuario es admin, permitiendo acceso")
+          if (userData.rol === 'admin') {
+            console.log("✅ Usuario es admin, permitiendo acceso")
+          } else if (fromCache) {
+            console.log("⚠️ Usando datos guardados, verificando rol offline")
+          }
         })
-        .catch(() => {
-          localStorage.removeItem("token")
-          router.replace("/login")
+        .catch((error) => {
+          console.error("Error en autenticación admin:", error)
+          // Solo eliminar token y redirigir si realmente no hay datos guardados
+          const cachedUser = authOffline.getUserData()
+          if (!cachedUser) {
+            localStorage.removeItem("token")
+            router.replace("/login")
+          } else {
+            // Si hay datos guardados, usarlos aunque haya error
+            console.log("⚠️ Error en validación pero usando datos guardados")
+            setUser(cachedUser)
+          }
         })
         .finally(() => setLoading(false))
     }, [router])

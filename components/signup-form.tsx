@@ -66,17 +66,38 @@ export function SignupForm() {
         }),
       })
 
-      const data = await response.json()
+      // Verificar si la respuesta es válida antes de parsear JSON
+      let data;
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        console.error('Error parseando JSON:', jsonError)
+        throw new Error("Error en la respuesta del servidor")
+      }
+
+      // Verificar si es una respuesta offline (independientemente del status code)
+      if (data.offline) {
+        alert("¡Registro guardado offline! Se sincronizará cuando tengas conexión.")
+        router.push("/")
+        return
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || "Error al crear usuario")
+        throw new Error(data.error || data.message || "Error al crear usuario")
       }
 
       // Registro exitoso
       alert("¡Usuario registrado exitosamente!")
       router.push("/dashboard")
     } catch (error: any) {
-      alert(error.message || "Error al registrar usuario")
+      console.error('Error en registro:', error)
+      // Verificar si es un error de red
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        alert("Sin conexión a internet. El registro se guardará para sincronización posterior.")
+        router.push("/")
+      } else {
+        alert(error.message || "Error al registrar usuario")
+      }
     } finally {
       setIsLoading(false)
     }

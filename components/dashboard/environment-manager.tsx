@@ -165,32 +165,29 @@ export function EnvironmentManager() {
 
       console.log("🔍 Obteniendo entornos para userId:", userId)
       
-      const res = await fetch("http://localhost:4001/entornos", {
-        headers: { 
-          Authorization: `Bearer ${token}` 
-        }
-      })
+      // Usar dashboardCache que maneja offline automáticamente
+      const { dashboardCache } = await import("@/lib/dashboard-cache")
+      const data = await dashboardCache.fetchEnvironments(userId, token)
       
-      if (!res.ok) {
-        throw new Error(`Error al obtener entornos: ${res.status}`)
-      }
-      
-      const data = await res.json()
-      console.log("📦 Datos recibidos del backend:", data)
-      
-      // Filtrar entornos solo del usuario autenticado
-      if (Array.isArray(data)) {
-        const userEnvironments = data.filter(env => env.usuario === userId)
-        console.log(`✅ Total entornos: ${data.length}, Entornos del usuario: ${userEnvironments.length}`)
-        console.log("🔍 Entornos filtrados:", userEnvironments)
-        setEnvironments(userEnvironments)
-      } else {
-        console.error("❌ Formato de respuesta inesperado:", data)
-        setEnvironments([])
-      }
+      console.log("📦 Datos recibidos (pueden ser del servidor o caché):", data)
+      console.log(`✅ Entornos del usuario: ${data.length}`)
+      setEnvironments(data)
     } catch (error) {
       console.error("❌ Error al obtener entornos:", error)
-      setEnvironments([])
+      // Intentar usar datos del caché como último recurso
+      try {
+        const { dashboardCache } = await import("@/lib/dashboard-cache")
+        const cached = dashboardCache.getDashboardData()
+        if (cached && cached.environments) {
+          const userEnvs = cached.environments.filter((env: any) => env.usuario === userId)
+          console.log("⚠️ Usando entornos desde caché debido a error")
+          setEnvironments(userEnvs)
+        } else {
+          setEnvironments([])
+        }
+      } catch {
+        setEnvironments([])
+      }
     }
   }
 
@@ -244,28 +241,86 @@ export function EnvironmentManager() {
       createdAt: new Date().toISOString()
     }
 
+    const token = localStorage.getItem("token")
+    const { dashboardCache } = await import("@/lib/dashboard-cache")
+    const isOffline = !dashboardCache.isOnline()
+
+    // Si estamos offline, agregar el entorno localmente al caché para feedback visual
+    if (isOffline) {
+      const cached = dashboardCache.getDashboardData()
+      if (cached && cached.environments) {
+        // Crear un ID temporal para el entorno offline
+        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const tempEnvironment = {
+          ...newEnvironment,
+          _id: tempId,
+          id: tempId,
+          _temp: true, // Marcar como temporal para identificarlo después
+        }
+        const updatedEnvironments = [...cached.environments, tempEnvironment]
+        dashboardCache.saveDashboardData({ environments: updatedEnvironments })
+        // Actualizar el estado local también
+        setEnvironments(updatedEnvironments.filter((env: any) => env.usuario === userId))
+      }
+    }
+
     try {
+      // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
+      // Si estamos online, la petición se ejecutará normalmente
       const response = await fetch("http://localhost:4001/entornos/crear-entornos", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(newEnvironment),
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Error al crear entorno")
+      // Leer el body de la respuesta una sola vez
+      let responseData: any = {};
+      try {
+        const text = await response.text();
+        if (text) {
+          responseData = JSON.parse(text);
+        }
+      } catch (e) {
+        // Si no se puede parsear, responseData queda como {}
+      }
+      
+      // Verificar si la respuesta es offline (guardada en IndexedDB)
+      if (responseData.offline) {
+        console.log("✅ Petición de creación guardada para sincronización offline")
+        setIsCreateModalOpen(false)
+        resetForm()
+        if (isOffline) {
+          alert("✅ Entorno creado localmente. Se sincronizará cuando tengas conexión.")
+        }
+        return
       }
 
-      const createdEnvironment = await response.json()
+      if (!response.ok) {
+        throw new Error(responseData.error || responseData.message || "Error al crear entorno")
+      }
+
+      const createdEnvironment = responseData
       setIsCreateModalOpen(false)
       resetForm()
-      fetchEnvironments()
+      
+      // Si la petición fue exitosa y estamos online, refrescar para obtener datos actualizados
+      if (!isOffline) {
+        fetchEnvironments()
+      }
     } catch (error: any) {
       console.error("Error al crear entorno:", error)
-      alert(`Error: ${error.message}`)
+      // Si hay error pero estamos offline, el entorno ya se agregó localmente
+      if (isOffline) {
+        console.log("📴 Petición guardada en IndexedDB para sincronización posterior")
+        setIsCreateModalOpen(false)
+        resetForm()
+        alert("✅ Entorno creado localmente. Se sincronizará cuando tengas conexión.")
+      } else {
+        alert(`Error: ${error.message}`)
+      }
     }
   }
 
@@ -305,14 +360,42 @@ export function EnvironmentManager() {
       const entornoActual = environments.find(env => env._id === environmentId || env.id === environmentId)
       if (!entornoActual) return
 
+      const newEstado = !entornoActual.estado
+      const token = localStorage.getItem("token")
+      
+      // Actualizar el estado localmente inmediatamente para feedback visual
+      const { dashboardCache } = await import("@/lib/dashboard-cache")
+      const cached = dashboardCache.getDashboardData()
+      if (cached && cached.environments) {
+        const updatedEnvironments = cached.environments.map((env: any) => {
+          if ((env._id === environmentId || env.id === environmentId)) {
+            return { ...env, estado: newEstado }
+          }
+          return env
+        })
+        dashboardCache.saveDashboardData({ environments: updatedEnvironments })
+        // Actualizar el estado local también
+        setEnvironments(updatedEnvironments.filter((env: any) => env.usuario === userId))
+      }
+
+      // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
+      // Si estamos online, la petición se ejecutará normalmente
       const response = await fetch(`http://localhost:4001/entornos/cambiar-estado/${environmentId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ estado: !entornoActual.estado })
+        body: JSON.stringify({ estado: newEstado })
       })
+
+      // Verificar si la respuesta es offline (guardada en IndexedDB)
+      const responseData = await response.json().catch(() => ({}))
+      if (responseData.offline) {
+        console.log("✅ Petición guardada para sincronización offline")
+        // El estado ya se actualizó localmente arriba
+        return
+      }
 
       if (!response.ok) {
         const text = await response.text()
@@ -321,30 +404,95 @@ export function EnvironmentManager() {
         return
       }
 
-      fetchEnvironments()
+      // Si la petición fue exitosa y estamos online, refrescar para obtener datos actualizados
+      if (dashboardCache.isOnline()) {
+        fetchEnvironments()
+      }
     } catch (error) {
       console.error("Error al cambiar estado:", error)
-      alert("Error al cambiar estado del entorno")
+      // Si hay error pero estamos offline, el estado ya se actualizó localmente
+      // El interceptor debería haber guardado la petición en IndexedDB
+      const { dashboardCache } = await import("@/lib/dashboard-cache")
+      if (!dashboardCache.isOnline()) {
+        console.log("📴 Petición guardada en IndexedDB para sincronización posterior")
+      } else {
+        alert("Error al cambiar estado del entorno")
+      }
     }
   }
 
   const deleteEnvironment = async (environmentId: string) => {
     if (!window.confirm("¿Seguro que deseas eliminar este entorno?")) return;
+    
+    const token = localStorage.getItem("token")
+    const { dashboardCache } = await import("@/lib/dashboard-cache")
+    const isOffline = !dashboardCache.isOnline()
+    
+    // Eliminar el entorno localmente inmediatamente para feedback visual
+    const cached = dashboardCache.getDashboardData()
+    if (cached && cached.environments) {
+      const updatedEnvironments = cached.environments.filter(
+        (env: any) => (env._id !== environmentId && env.id !== environmentId)
+      )
+      dashboardCache.saveDashboardData({ environments: updatedEnvironments })
+      // Actualizar el estado local también
+      setEnvironments(updatedEnvironments.filter((env: any) => env.usuario === userId))
+    }
+    
     try {
+      // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
+      // Si estamos online, la petición se ejecutará normalmente
       const response = await fetch(`http://localhost:4001/entornos/eliminar/${environmentId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${token}`
         }
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Error al eliminar entorno");
+      })
+      
+      // Leer el body de la respuesta una sola vez
+      let responseData: any = {};
+      try {
+        const text = await response.text();
+        if (text) {
+          responseData = JSON.parse(text);
+        }
+      } catch (e) {
+        // Si no se puede parsear, responseData queda como {}
       }
-      fetchEnvironments();
-    } catch (error) {
-      console.error("Error al eliminar entorno:", error);
-      alert("Error al eliminar entorno");
+      
+      // Verificar si la respuesta es offline (guardada en IndexedDB)
+      if (responseData.offline) {
+        console.log("✅ Petición de eliminación guardada para sincronización offline")
+        if (isOffline) {
+          alert("✅ Entorno eliminado localmente. Se sincronizará cuando tengas conexión.")
+        }
+        return
+      }
+      
+      if (!response.ok) {
+        throw new Error(responseData.error || responseData.message || "Error al eliminar entorno")
+      }
+      
+      // Si la petición fue exitosa y estamos online, refrescar para obtener datos actualizados
+      if (!isOffline) {
+        fetchEnvironments()
+      }
+    } catch (error: any) {
+      console.error("Error al eliminar entorno:", error)
+      // Si hay error pero estamos offline, el entorno ya se eliminó localmente
+      if (isOffline) {
+        console.log("📴 Petición guardada en IndexedDB para sincronización posterior")
+        alert("✅ Entorno eliminado localmente. Se sincronizará cuando tengas conexión.")
+      } else {
+        // Si hay error online, restaurar el entorno en el caché
+        const cached = dashboardCache.getDashboardData()
+        if (cached && cached.environments) {
+          // Intentar restaurar el entorno desde el estado anterior
+          // (esto es una aproximación, idealmente deberíamos guardar el entorno antes de eliminarlo)
+          fetchEnvironments()
+        }
+        alert(`Error: ${error.message}`)
+      }
     }
   }
 
@@ -369,6 +517,17 @@ export function EnvironmentManager() {
 
   const handleEditEnvironment = async () => {
     if (!editEnvironmentId) return
+    
+    // Verificar que el usuario es el dueño del entorno antes de intentar editarlo
+    const environmentToEdit = environments.find(
+      (env) => (env._id === editEnvironmentId || env.id === editEnvironmentId)
+    )
+    
+    if (environmentToEdit && environmentToEdit.usuario !== userId) {
+      alert("❌ No tienes permisos para editar este entorno. Solo puedes editar tus propios entornos.")
+      return
+    }
+    
     // Mapea los días al formato correcto
     const diasSemana = editFormData.scheduledDay.map((d) => diasSemanaMap[d] || d)
     const updatedEnvironment = {
@@ -392,24 +551,115 @@ export function EnvironmentManager() {
       }] : [],
       usuario: userId,
     }
+    
+    const token = localStorage.getItem("token")
+    const { dashboardCache } = await import("@/lib/dashboard-cache")
+    const isOffline = !dashboardCache.isOnline()
+    
+    // Información de depuración
+    console.log("=== DEBUG EDIT ENVIRONMENT ===")
+    console.log("Environment ID:", editEnvironmentId)
+    console.log("User ID:", userId)
+    console.log("Environment owner:", environmentToEdit?.usuario)
+    console.log("Token available:", !!token)
+    console.log("Is offline:", isOffline)
+    console.log("==============================")
+    
+    // Actualizar el entorno localmente inmediatamente para feedback visual
+    const cached = dashboardCache.getDashboardData()
+    if (cached && cached.environments) {
+      const updatedEnvironments = cached.environments.map((env: any) => {
+        if ((env._id === editEnvironmentId || env.id === editEnvironmentId)) {
+          return {
+            ...env,
+            ...updatedEnvironment,
+            // Mantener el ID original
+            _id: env._id,
+            id: env.id,
+          }
+        }
+        return env
+      })
+      dashboardCache.saveDashboardData({ environments: updatedEnvironments })
+      // Actualizar el estado local también
+      setEnvironments(updatedEnvironments.filter((env: any) => env.usuario === userId))
+    }
+    
     try {
+      // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
+      // Si estamos online, la petición se ejecutará normalmente
       const response = await fetch(`http://localhost:4001/entornos/editar/${editEnvironmentId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(updatedEnvironment),
       })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Error al editar entorno")
+      
+      // Leer el body de la respuesta una sola vez
+      let responseData: any = {};
+      try {
+        const text = await response.text();
+        if (text) {
+          responseData = JSON.parse(text);
+        }
+      } catch (e) {
+        // Si no se puede parsear, responseData queda como {}
       }
+      
+      // Verificar si la respuesta es offline (guardada en IndexedDB)
+      if (responseData.offline) {
+        console.log("✅ Petición de edición guardada para sincronización offline")
+        setIsEditModalOpen(false)
+        if (isOffline) {
+          alert("✅ Entorno editado localmente. Se sincronizará cuando tengas conexión.")
+        }
+        return
+      }
+      
+      if (!response.ok) {
+        const errorMsg = responseData.error || responseData.message || "Error al editar entorno"
+        
+        // Si es un error 403, proporcionar más información
+        if (response.status === 403) {
+          console.error("❌ Error 403 - Permisos insuficientes")
+          console.error("Detalles:", {
+            status: response.status,
+            error: errorMsg,
+            environmentId: editEnvironmentId,
+            userId: userId,
+            environmentOwner: environmentToEdit?.usuario,
+            isOwner: environmentToEdit?.usuario === userId
+          })
+          
+          // Verificar si el mensaje indica que se requieren permisos de administrador
+          if (errorMsg.includes("administrador") || errorMsg.includes("admin")) {
+            throw new Error(`${errorMsg}\n\nNota: El backend está requiriendo permisos de administrador para editar entornos. Esto puede ser un problema de configuración del backend.`)
+          } else {
+            throw new Error(errorMsg)
+          }
+        }
+        
+        throw new Error(errorMsg)
+      }
+      
       setIsEditModalOpen(false)
-      fetchEnvironments()
+      
+      // Si la petición fue exitosa y estamos online, refrescar para obtener datos actualizados
+      if (!isOffline) {
+        fetchEnvironments()
+      }
     } catch (error: any) {
       console.error("Error al editar entorno:", error)
-      alert(`Error: ${error.message}`)
+      // Si hay error pero estamos offline, el entorno ya se actualizó localmente
+      if (isOffline) {
+        console.log("📴 Petición guardada en IndexedDB para sincronización posterior")
+        setIsEditModalOpen(false)
+        alert("✅ Entorno editado localmente. Se sincronizará cuando tengas conexión.")
+      } else {
+        alert(`Error: ${error.message}`)
+      }
     }
   }
 
