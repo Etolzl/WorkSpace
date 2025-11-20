@@ -1,8 +1,8 @@
 // Service Worker para PWA
-const CACHE_NAME = 'pwa-cache-v1.4.9';
-const APP_SHELL_CACHE = 'app-shell-v1.4.9';
-const STATIC_CACHE = 'static-cache-v1.4.9';
-const DYNAMIC_CACHE = 'dynamic-cache-v1.4.9';
+const CACHE_NAME = 'pwa-cache-v1.5.3';
+const APP_SHELL_CACHE = 'app-shell-v1.5.3';
+const STATIC_CACHE = 'static-cache-v1.5.3';
+const DYNAMIC_CACHE = 'dynamic-cache-v1.5.3';
 
 // Rutas fijas de la aplicación (APP SHELL) - Solo recursos locales
 const APP_SHELL_ROUTES = [
@@ -147,7 +147,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // No interceptar peticiones a la API del backend (puerto 4001)
-  if (url.port === '4001' || url.hostname.includes('4001') || url.href.includes('localhost:4001')) {
+  if (url.port === '4001' || url.hostname.includes('4001') || url.href.includes('https://workspaceapi-b81x.onrender.com')) {
     return;
   }
 

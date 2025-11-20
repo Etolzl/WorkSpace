@@ -5,7 +5,7 @@
 
 import { pushCache } from './push-cache';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://https://workspaceapi-b81x.onrender.com';
 
 interface AutoSubscribeResult {
   success: boolean;

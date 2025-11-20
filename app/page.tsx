@@ -47,7 +47,7 @@ export default function LandingPage() {
     if (token) {
       setIsLoggedIn(true)
       // Obtener el nombre del usuario desde la API
-      fetch("http://localhost:4001/auth/me", {
+      fetch("http://https://workspaceapi-b81x.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {
@@ -84,9 +84,6 @@ export default function LandingPage() {
           <div className="flex items-center justify-between h-16">
             {/* Logo y Nombre */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5 text-white" />
-              </div>
               <span className="text-xl font-bold text-white">WorkSpace</span>
             </div>
 
@@ -515,6 +512,207 @@ export default function LandingPage() {
               Comienza tu Viaje de Hogar Inteligente
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile App Download Section */}
+      <section className="py-24 bg-gradient-to-b from-transparent to-white/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-3xl blur-3xl" />
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 lg:p-12 border border-white/20">
+                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                        📱 Disponible en Aptoide
+                      </Badge>
+                      <h2 className="text-3xl lg:text-5xl font-bold text-white leading-tight">
+                        Descarga Nuestra
+                        <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                          {" "}
+                          App Móvil
+                        </span>
+                      </h2>
+                      <p className="text-xl text-gray-300 leading-relaxed">
+                        Lleva todo el poder de WorkSpace contigo. Nuestra aplicación móvil ofrece prácticamente la misma
+                        funcionalidad que los dashboards de escritorio, permitiéndote controlar tu hogar inteligente desde
+                        cualquier lugar.
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold text-white">Características de la App:</h3>
+                      <ul className="space-y-3 text-gray-300">
+                        <li className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
+                          <span>Control completo de todos tus dispositivos IoT en tiempo real</span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
+                          <span>Gestión de ambientes y automatizaciones desde tu móvil</span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 flex-shrink-0" />
+                          <span>Notificaciones push para eventos importantes del hogar</span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-orange-400 rounded-full mt-2 flex-shrink-0" />
+                          <span>Sincronización offline para uso sin conexión</span>
+                        </li>
+                        <li className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0" />
+                          <span>Acceso a estadísticas y análisis desde cualquier lugar</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="pt-4">
+                      <p className="text-gray-300 mb-4">Descarga ahora desde Aptoide:</p>
+                      <a
+                        href="https://www.aptoide.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block transition-transform hover:scale-105"
+                      >
+                        <Image
+                          src="/Aptoide_badge_white.svg"
+                          alt="Descargar desde Aptoide"
+                          width={195}
+                          height={60}
+                          className="h-auto"
+                        />
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="relative flex justify-center lg:justify-end items-center">
+                    {/* Phone Frame */}
+                    <div className="relative w-full max-w-[340px] transform hover:scale-105 transition-transform duration-300">
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/40 to-purple-600/40 rounded-[3rem] blur-3xl scale-110 animate-pulse" />
+                      
+                      {/* Device Frame */}
+                      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-700/80 backdrop-blur-sm">
+                        {/* Notch */}
+                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-10" />
+                        
+                        {/* Screen */}
+                        <div className="relative bg-slate-900 rounded-[2.5rem] overflow-hidden">
+                          {/* Status Bar */}
+                          <div className="bg-slate-800/50 px-6 py-2 flex justify-between items-center text-white text-xs">
+                            <span>9:41</span>
+                            <div className="flex items-center space-x-1">
+                              <div className="w-4 h-2 border border-white/50 rounded-sm">
+                                <div className="w-3/4 h-full bg-white rounded-sm" />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* App Interface */}
+                          <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-[500px] p-4 space-y-4">
+                            {/* Header */}
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h3 className="text-white font-bold text-lg">WorkSpace</h3>
+                                <p className="text-gray-400 text-xs">Mi Hogar</p>
+                              </div>
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                <Home className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+
+                            {/* Quick Stats */}
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                                <div className="flex items-center justify-between mb-2">
+                                  <Thermometer className="w-4 h-4 text-blue-400" />
+                                  <span className="text-green-400 text-xs">●</span>
+                                </div>
+                                <div className="text-2xl font-bold text-white">22°C</div>
+                                <div className="text-gray-400 text-xs">Sala</div>
+                              </div>
+                              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                                <div className="flex items-center justify-between mb-2">
+                                  <Lightbulb className="w-4 h-4 text-yellow-400" />
+                                  <span className="text-green-400 text-xs">●</span>
+                                </div>
+                                <div className="text-2xl font-bold text-white">8/12</div>
+                                <div className="text-gray-400 text-xs">Luces ON</div>
+                              </div>
+                            </div>
+
+                            {/* Devices Grid */}
+                            <div>
+                              <h4 className="text-white font-semibold text-sm mb-3">Dispositivos</h4>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                  <Lock className="w-5 h-5 text-green-400 mb-2" />
+                                  <div className="text-white text-xs font-medium">Seguridad</div>
+                                  <div className="text-gray-400 text-xs">Activo</div>
+                                </div>
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                  <Activity className="w-5 h-5 text-purple-400 mb-2" />
+                                  <div className="text-white text-xs font-medium">Sensores</div>
+                                  <div className="text-gray-400 text-xs">24 activos</div>
+                                </div>
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                  <Settings className="w-5 h-5 text-blue-400 mb-2" />
+                                  <div className="text-white text-xs font-medium">Automatización</div>
+                                  <div className="text-gray-400 text-xs">5 escenarios</div>
+                                </div>
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                  <BarChart3 className="w-5 h-5 text-orange-400 mb-2" />
+                                  <div className="text-white text-xs font-medium">Analíticas</div>
+                                  <div className="text-gray-400 text-xs">Ver reportes</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Quick Actions */}
+                            <div>
+                              <h4 className="text-white font-semibold text-sm mb-3">Acciones Rápidas</h4>
+                              <div className="flex space-x-2">
+                                <button className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg py-2.5 px-3 text-white text-xs font-medium">
+                                  Modo Hogar
+                                </button>
+                                <button className="flex-1 bg-white/10 rounded-lg py-2.5 px-3 text-white text-xs font-medium border border-white/20">
+                                  Apagar Todo
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Sync Status */}
+                            <div className="bg-white/5 rounded-lg p-3 border border-white/10 flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                                <span className="text-gray-300 text-xs">Sincronizado</span>
+                              </div>
+                              <span className="text-gray-400 text-xs">Hace 2 min</span>
+                            </div>
+
+                            {/* Bottom Navigation */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-slate-800/80 backdrop-blur-sm border-t border-white/10 px-4 py-2">
+                              <div className="flex justify-around items-center">
+                                <div className="flex flex-col items-center">
+                                  <Home className="w-5 h-5 text-blue-400 mb-1" />
+                                  <div className="w-1 h-1 bg-blue-400 rounded-full" />
+                                </div>
+                                <Activity className="w-5 h-5 text-gray-500" />
+                                <BarChart3 className="w-5 h-5 text-gray-500" />
+                                <Settings className="w-5 h-5 text-gray-500" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

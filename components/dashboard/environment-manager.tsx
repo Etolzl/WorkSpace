@@ -267,7 +267,7 @@ export function EnvironmentManager() {
     try {
       // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
       // Si estamos online, la petición se ejecutará normalmente
-      const response = await fetch("http://localhost:4001/entornos/crear-entornos", {
+      const response = await fetch("http://https://workspaceapi-b81x.onrender.com/entornos/crear-entornos", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -380,7 +380,7 @@ export function EnvironmentManager() {
 
       // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
       // Si estamos online, la petición se ejecutará normalmente
-      const response = await fetch(`http://localhost:4001/entornos/cambiar-estado/${environmentId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/entornos/cambiar-estado/${environmentId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -442,7 +442,7 @@ export function EnvironmentManager() {
     try {
       // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
       // Si estamos online, la petición se ejecutará normalmente
-      const response = await fetch(`http://localhost:4001/entornos/eliminar/${environmentId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/entornos/eliminar/${environmentId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -588,7 +588,7 @@ export function EnvironmentManager() {
     try {
       // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
       // Si estamos online, la petición se ejecutará normalmente
-      const response = await fetch(`http://localhost:4001/entornos/editar/${editEnvironmentId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/entornos/editar/${editEnvironmentId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

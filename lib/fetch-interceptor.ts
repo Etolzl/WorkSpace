@@ -14,7 +14,7 @@ export const createOfflineFetch = () => {
     }
 
     // Solo interceptar peticiones a la API
-    if (!url.includes('/api/') && !url.includes('localhost:4001') && !url.includes('127.0.0.1:4001')) {
+    if (!url.includes('/api/') && !url.includes('https://workspaceapi-b81x.onrender.com') && !url.includes('127.0.0.1:4001')) {
       return originalFetch(input, init);
     }
 

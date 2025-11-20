@@ -59,7 +59,7 @@ function UsersManagementPage({ user }: { user: any }) {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:4001/users", {
+      const response = await fetch("http://https://workspaceapi-b81x.onrender.com/users", {
         headers: { Authorization: `Bearer ${token}` }
       })
       
@@ -82,7 +82,7 @@ function UsersManagementPage({ user }: { user: any }) {
       // Obtener suscripciones de cada usuario
       for (const userItem of users) {
         try {
-          const response = await fetch(`http://localhost:4001/push/subscriptions/${userItem._id}`, {
+          const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/push/subscriptions/${userItem._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           
@@ -122,7 +122,7 @@ function UsersManagementPage({ user }: { user: any }) {
     setSendingNotification(true)
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch(`http://localhost:4001/push/send-to-user/${userId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/push/send-to-user/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +171,7 @@ function UsersManagementPage({ user }: { user: any }) {
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch(`http://localhost:4001/users/${userId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/users/${userId}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -193,7 +193,7 @@ function UsersManagementPage({ user }: { user: any }) {
     
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch(`http://localhost:4001/users/${userId}`, {
+      const response = await fetch(`http://https://workspaceapi-b81x.onrender.com/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       })

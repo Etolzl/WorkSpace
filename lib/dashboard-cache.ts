@@ -89,7 +89,7 @@ export const dashboardCache = {
 
     // Si hay conexión, intentar obtener datos del servidor
     try {
-      const res = await fetch(`http://localhost:4001/entornos`, {
+      const res = await fetch(`http://https://workspaceapi-b81x.onrender.com/entornos`, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
