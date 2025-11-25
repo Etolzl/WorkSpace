@@ -25,7 +25,7 @@ export function PeriodicSyncStatus() {
         setLastSyncTime(new Date());
         setSyncCount(prev => prev + 1);
       }
-    }, 30000); // Cada 30 segundos
+    }, 10000); // Cada 10 segundos
 
     return () => clearInterval(interval);
   }, [isOnline, pendingRequests.length]);
@@ -70,7 +70,7 @@ export function PeriodicSyncStatus() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <RefreshCw className="h-3 w-3" />
-              <span>Verificación cada 30 segundos</span>
+              <span>Verificación cada 10 segundos</span>
             </div>
             
             {lastSyncTime && (

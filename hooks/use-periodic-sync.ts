@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { offlineStorage } from '@/lib/offline-storage';
 
 interface UsePeriodicSyncOptions {
-  intervalMs?: number; // Intervalo en milisegundos (default: 30000 = 30 segundos)
+  intervalMs?: number; // Intervalo en milisegundos (default: 10000 = 10 segundos)
   enabled?: boolean; // Si está habilitado (default: true)
   onSyncStart?: () => void; // Callback cuando inicia sincronización
   onSyncComplete?: (syncedCount: number) => void; // Callback cuando completa sincronización
@@ -11,7 +11,7 @@ interface UsePeriodicSyncOptions {
 
 export const usePeriodicSync = (options: UsePeriodicSyncOptions = {}) => {
   const {
-    intervalMs = 30000, // 30 segundos por defecto
+    intervalMs = 10000, // 10 segundos por defecto
     enabled = true,
     onSyncStart,
     onSyncComplete,

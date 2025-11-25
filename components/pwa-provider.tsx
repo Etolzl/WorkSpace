@@ -26,9 +26,9 @@ export function PWAProvider({ children }: PWAProviderProps) {
   const pwaState = usePWA();
   const offlineSync = useOfflineSync();
 
-  // Configurar verificación periódica cada 30 segundos
+  // Configurar verificación periódica cada 10 segundos
   const periodicSync = usePeriodicSync({
-    intervalMs: 30000, // 30 segundos
+    intervalMs: 10000, // 10 segundos
     enabled: true,
     onSyncStart: () => console.log('Iniciando sincronización periódica...'),
     onSyncComplete: (syncedCount) => {
