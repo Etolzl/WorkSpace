@@ -4,8 +4,7 @@
  */
 
 import { pushCache } from './push-cache';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://workspaceapi-b81x.onrender.com';
+import { API_BASE_URL } from './api-config';
 
 interface AutoSubscribeResult {
   success: boolean;

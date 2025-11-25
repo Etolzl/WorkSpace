@@ -29,7 +29,7 @@ interface UsePushNotificationsReturn {
   getSubscriptions: () => Promise<any[]>;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://workspaceapi-b81x.onrender.com';
+import { API_BASE_URL } from '@/lib/api-config';
 
 export const usePushNotifications = (): UsePushNotificationsReturn => {
   const [isSupported, setIsSupported] = useState(false);
