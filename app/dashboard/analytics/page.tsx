@@ -9,7 +9,7 @@ import { withAdminAuth } from "@/components/withAdminAuth"
 import { Badge } from "@/components/ui/badge"
 import { RefreshCw } from "lucide-react"
 
-const API_BASE = "https://api-python-vc4l.onrender.com"
+const API_BASE = "https://workspaceapi-b81x.onrender.com"
 
 type PlotlyFigure = {
   data: any[]

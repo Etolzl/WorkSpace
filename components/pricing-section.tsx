@@ -12,6 +12,9 @@ import {
   Calendar,
   ChevronDown,
   ArrowRight,
+  CreditCard,
+  Wallet,
+  Coins,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -108,10 +111,10 @@ export function PricingSection() {
         {/* Encabezado */}
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-white">
-            Precios
+            PRECIOS
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {" "}
-              simples
+              SIMPLES
             </span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -187,7 +190,7 @@ export function PricingSection() {
         <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-white mb-4">Comparación de características</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">COMPARACIÓN DE CARACTERÍSTICAS</h3>
               <Button
                 onClick={() => setShowComparison(!showComparison)}
                 variant="outline"
@@ -247,13 +250,16 @@ export function PricingSection() {
         <div className="text-center mt-12">
           <p className="text-gray-300 mb-6">Aceptamos pagos con:</p>
           <div className="flex justify-center items-center space-x-8">
-            <div className="text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-300">
+              <CreditCard className="w-5 h-5" />
               <span>Tarjeta de crédito</span>
             </div>
-            <div className="text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-300">
+              <Wallet className="w-5 h-5" />
               <span>PayPal</span>
             </div>
-            <div className="text-gray-300">
+            <div className="flex items-center space-x-2 text-gray-300">
+              <Coins className="w-5 h-5" />
               <span>Criptomonedas</span>
             </div>
           </div>
@@ -262,7 +268,7 @@ export function PricingSection() {
         {/* Call to Action */}
         <div className="text-center mt-16">
           <h3 className="text-2xl font-bold text-white mb-4">
-            ¿No estás seguro de qué plan elegir?
+            ¿NO ESTÁS SEGURO DE QUÉ PLAN ELEGIR?
           </h3>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
             Comienza con el plan gratuito y actualiza cuando lo necesites. No hay compromisos a largo plazo.

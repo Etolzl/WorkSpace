@@ -26,7 +26,7 @@ export function LoginForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("http://https://workspaceapi-b81x.onrender.com/users/login", {
+      const response = await fetch("https://workspaceapi-b81x.onrender.com/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -115,7 +115,7 @@ export function LoginForm() {
 
             <div className="space-y-2">
               <CardTitle className="text-2xl font-bold text-white">Bienvenido de vuelta</CardTitle>
-              <CardDescription className="text-gray-300">Inicia sesión en tu cuenta de SmartHome</CardDescription>
+              <CardDescription className="text-gray-300">Inicia sesión en tu cuenta de WorkSpace</CardDescription>
             </div>
           </CardHeader>
 

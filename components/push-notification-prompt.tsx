@@ -167,7 +167,7 @@ export function PushNotificationPrompt({ onClose }: PushNotificationPromptProps)
             <DialogTitle className="text-white text-xl">Activar Notificaciones Push</DialogTitle>
           </div>
           <DialogDescription className="text-gray-300 pt-2">
-            Mantente al día con las últimas actualizaciones y alertas de tu Smart Home.
+            Mantente al día con las últimas actualizaciones y alertas de tu WorkSpace.
             Recibirás notificaciones sobre cambios importantes en tus entornos y sensores.
           </DialogDescription>
         </DialogHeader>

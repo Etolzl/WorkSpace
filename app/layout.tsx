@@ -3,14 +3,14 @@ import './globals.css'
 import { PWAProvider } from '@/components/pwa-provider'
 
 export const metadata: Metadata = {
-  title: 'Smart Home Dashboard',
+  title: 'WorkSpace Dashboard',
   description: 'Panel de control inteligente para gestión de hogar automatizado',
   generator: 'Next.js',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Smart Home Dashboard',
+    title: 'WorkSpace Dashboard',
   },
   icons: {
     icon: [
@@ -45,7 +45,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#3b82f6" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Smart Home Dashboard" />
+        <meta name="apple-mobile-web-app-title" content="WorkSpace Dashboard" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#3b82f6" />
         <meta name="msapplication-tap-highlight" content="no" />

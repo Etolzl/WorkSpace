@@ -1,6 +1,6 @@
 {
-  "name": "Smart Home Dashboard",
-  "short_name": "SmartHome",
+  "name": "WorkSpace Dashboard",
+  "short_name": "WorkSpace",
   "description": "Panel de control inteligente para gestión de hogar automatizado",
   "start_url": "/",
   "display": "standalone",
@@ -25,7 +25,7 @@
       "purpose": "any"
     },
     {
-      "src": "/favicon/web-app-manifest-512x512.png",
+      "src": "/logoxd.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -49,7 +49,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/favicon/web-app-manifest-512x512.png",
+      "src": "/logoxd.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

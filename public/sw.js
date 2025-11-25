@@ -1,8 +1,8 @@
 // Service Worker para PWA
-const CACHE_NAME = 'pwa-cache-v1.5.3';
-const APP_SHELL_CACHE = 'app-shell-v1.5.3';
-const STATIC_CACHE = 'static-cache-v1.5.3';
-const DYNAMIC_CACHE = 'dynamic-cache-v1.5.3';
+const CACHE_NAME = 'pwa-cache-v1.6.4';
+const APP_SHELL_CACHE = 'app-shell-v1.6.4';
+const STATIC_CACHE = 'static-cache-v1.6.4';
+const DYNAMIC_CACHE = 'dynamic-cache-v1.6.4';
 
 // Rutas fijas de la aplicación (APP SHELL) - Solo recursos locales
 const APP_SHELL_ROUTES = [
@@ -21,6 +21,7 @@ const APP_SHELL_ROUTES = [
   '/favicon/favicon-96x96.png',
   '/favicon/web-app-manifest-192x192.png',
   '/favicon/web-app-manifest-512x512.png',
+  '/logoxd.png',
   '/placeholder-logo.png',
   '/placeholder-logo.svg',
   '/placeholder-user.jpg',

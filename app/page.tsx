@@ -47,7 +47,7 @@ export default function LandingPage() {
     if (token) {
       setIsLoggedIn(true)
       // Obtener el nombre del usuario desde la API
-      fetch("http://https://workspaceapi-b81x.onrender.com/auth/me", {
+      fetch("https://workspaceapi-b81x.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {
@@ -170,13 +170,13 @@ export default function LandingPage() {
                   🚀 Ahora con automatización inteligente
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight">
-                  Automatización
+                  AUTOMATIZACIÓN
                   <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                     {" "}
-                    del Hogar
+                    DEL HOGAR
                   </span>
                   <br />
-                  Hecha Simple
+                  HECHA SIMPLE
                 </h1>
                 <p className="text-xl text-gray-300 leading-relaxed">
                   Transforma tu espacio de vida en un ambiente inteligente. Controla todo desde la iluminación hasta el
@@ -250,10 +250,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold text-white">
-              Características Poderosas para
+              CARACTERÍSTICAS PODEROSAS PARA
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 {" "}
-                Vida Inteligente
+                VIDA INTELIGENTE
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -267,7 +267,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Smartphone className="w-6 h-6 text-white" />
                 </div>
-                <CardTitle className="text-white text-xl">Control de Dispositivos IoT</CardTitle>
+                <CardTitle className="text-white text-xl">CONTROL DE DISPOSITIVOS IOT</CardTitle>
                 <CardDescription className="text-gray-300">
                   Conecta y controla todos tus dispositivos inteligentes desde una interfaz única e intuitiva.
                 </CardDescription>
@@ -295,7 +295,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Calendar className="w-6 h-6 text-white" />
                 </div>
-                <CardTitle className="text-white text-xl">Programación Inteligente</CardTitle>
+                <CardTitle className="text-white text-xl">PROGRAMACIÓN INTELIGENTE</CardTitle>
                 <CardDescription className="text-gray-300">
                   Crea horarios inteligentes que se adaptan automáticamente a tu estilo de vida y preferencias.
                 </CardDescription>
@@ -323,7 +323,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
-                <CardTitle className="text-white text-xl">Análisis Inteligente</CardTitle>
+                <CardTitle className="text-white text-xl">ANÁLISIS INTELIGENTE</CardTitle>
                 <CardDescription className="text-gray-300">
                   Obtén información detallada sobre el rendimiento de tu hogar con análisis avanzados y reportes.
                 </CardDescription>
@@ -354,10 +354,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold text-white">
-              Vista Previa del
+              VISTA PREVIA DEL
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 {" "}
-                Panel de Control
+                PANEL DE CONTROL
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -372,7 +372,7 @@ export default function LandingPage() {
                 {/* Main Dashboard */}
                 <div className="lg:col-span-2 space-y-6">
                   <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
-                    <h3 className="text-white text-lg font-semibold mb-4">Resumen de Habitaciones</h3>
+                    <h3 className="text-white text-lg font-semibold mb-4">RESUMEN DE HABITACIONES</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-white/5 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-2">
@@ -392,7 +392,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
-                    <h3 className="text-white text-lg font-semibold mb-4">Estado de Dispositivos</h3>
+                    <h3 className="text-white text-lg font-semibold mb-4">ESTADO DE DISPOSITIVOS</h3>
                     <div className="h-32 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-xl flex items-end justify-center">
                       <div className="text-white text-center">
                         <div className="text-3xl font-bold">24</div>
@@ -405,7 +405,7 @@ export default function LandingPage() {
                 {/* Sidebar */}
                 <div className="space-y-6">
                   <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
-                    <h3 className="text-white text-lg font-semibold mb-4">Acciones Rápidas</h3>
+                    <h3 className="text-white text-lg font-semibold mb-4">ACCIONES RÁPIDAS</h3>
                     <div className="space-y-3">
                       <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
                         <Lock className="mr-2 w-4 h-4" />
@@ -423,7 +423,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
-                    <h3 className="text-white text-lg font-semibold mb-4">Estado del Sistema</h3>
+                    <h3 className="text-white text-lg font-semibold mb-4">ESTADO DEL SISTEMA</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-300">Seguridad</span>
@@ -457,10 +457,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold text-white">
-              ¿Por Qué Elegir
+              ¿POR QUÉ ELEGIR
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 {" "}
-                WorkSpace?
+                WORKSPACE?
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -473,7 +473,7 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-white text-xl font-semibold mb-2">Súper Rápido</h3>
+              <h3 className="text-white text-xl font-semibold mb-2">SÚPER RÁPIDO</h3>
               <p className="text-gray-300">
                 Tiempos de respuesta instantáneos con nuestra infraestructura IoT optimizada
               </p>
@@ -483,7 +483,7 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-white text-xl font-semibold mb-2">Seguridad Bancaria</h3>
+              <h3 className="text-white text-xl font-semibold mb-2">SEGURIDAD BANCARIA</h3>
               <p className="text-gray-300">Cifrado de extremo a extremo protege tus datos y privacidad</p>
             </div>
 
@@ -491,7 +491,7 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Clock className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-white text-xl font-semibold mb-2">Monitoreo 24/7</h3>
+              <h3 className="text-white text-xl font-semibold mb-2">MONITOREO 24/7</h3>
               <p className="text-gray-300">Monitoreo del sistema y soporte las 24 horas del día</p>
             </div>
 
@@ -499,7 +499,7 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-white text-xl font-semibold mb-2">Soporte Experto</h3>
+              <h3 className="text-white text-xl font-semibold mb-2">SOPORTE EXPERTO</h3>
               <p className="text-gray-300">Equipo de soporte dedicado listo para ayudarte a tener éxito</p>
             </div>
           </div>
@@ -527,13 +527,13 @@ export default function LandingPage() {
                   <div className="space-y-6">
                     <div className="space-y-4">
                       <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-                        📱 Disponible en Aptoide
+                        📱 Disponible en Aptoide y Uptodown
                       </Badge>
                       <h2 className="text-3xl lg:text-5xl font-bold text-white leading-tight">
-                        Descarga Nuestra
+                        DESCARGA NUESTRA
                         <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                           {" "}
-                          App Móvil
+                          APP MÓVIL
                         </span>
                       </h2>
                       <p className="text-xl text-gray-300 leading-relaxed">
@@ -544,7 +544,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="text-xl font-semibold text-white">Características de la App:</h3>
+                      <h3 className="text-xl font-semibold text-white">CARACTERÍSTICAS DE LA APP:</h3>
                       <ul className="space-y-3 text-gray-300">
                         <li className="flex items-start space-x-3">
                           <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
@@ -570,21 +570,37 @@ export default function LandingPage() {
                     </div>
 
                     <div className="pt-4">
-                      <p className="text-gray-300 mb-4">Descarga ahora desde Aptoide:</p>
-                      <a
-                        href="https://www.aptoide.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block transition-transform hover:scale-105"
-                      >
-                        <Image
-                          src="/Aptoide_badge_white.svg"
-                          alt="Descargar desde Aptoide"
-                          width={195}
-                          height={60}
-                          className="h-auto"
-                        />
-                      </a>
+                      <p className="text-gray-300 mb-4">Descarga ahora desde:</p>
+                      <div className="flex flex-wrap gap-4 items-center">
+                        <a
+                          href="https://www.aptoide.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block transition-transform hover:scale-105"
+                        >
+                          <Image
+                            src="/Aptoide_badge_white.svg"
+                            alt="Descargar desde Aptoide"
+                            width={195}
+                            height={60}
+                            className="h-auto"
+                          />
+                        </a>
+                        <a
+                          href="https://www.uptodown.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block transition-transform hover:scale-105 bg-white rounded-lg p-2"
+                        >
+                          <Image
+                            src="/uptodown-1.svg"
+                            alt="Descargar desde Uptodown"
+                            width={195}
+                            height={60}
+                            className="h-auto"
+                          />
+                        </a>
+                      </div>
                     </div>
                   </div>
 
@@ -616,7 +632,7 @@ export default function LandingPage() {
                             {/* Header */}
                             <div className="flex items-center justify-between">
                               <div>
-                                <h3 className="text-white font-bold text-lg">WorkSpace</h3>
+                                <h3 className="text-white font-bold text-lg">WORKSPACE</h3>
                                 <p className="text-gray-400 text-xs">Mi Hogar</p>
                               </div>
                               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
@@ -646,7 +662,7 @@ export default function LandingPage() {
 
                             {/* Devices Grid */}
                             <div>
-                              <h4 className="text-white font-semibold text-sm mb-3">Dispositivos</h4>
+                              <h4 className="text-white font-semibold text-sm mb-3">DISPOSITIVOS</h4>
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-white/5 rounded-lg p-3 border border-white/10">
                                   <Lock className="w-5 h-5 text-green-400 mb-2" />
@@ -673,7 +689,7 @@ export default function LandingPage() {
 
                             {/* Quick Actions */}
                             <div>
-                              <h4 className="text-white font-semibold text-sm mb-3">Acciones Rápidas</h4>
+                              <h4 className="text-white font-semibold text-sm mb-3">ACCIONES RÁPIDAS</h4>
                               <div className="flex space-x-2">
                                 <button className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg py-2.5 px-3 text-white text-xs font-medium">
                                   Modo Hogar
@@ -751,7 +767,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-white font-semibold mb-4">Producto</h3>
+              <h3 className="text-white font-semibold mb-4">PRODUCTO</h3>
               <ul className="space-y-2 text-gray-300">
                 <li>
                   <Link href="#" className="hover:text-white transition-colors">
@@ -777,7 +793,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-white font-semibold mb-4">Empresa</h3>
+              <h3 className="text-white font-semibold mb-4">EMPRESA</h3>
               <ul className="space-y-2 text-gray-300">
                 <li>
                   <Link href="#" className="hover:text-white transition-colors">
@@ -803,7 +819,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-white font-semibold mb-4">Soporte</h3>
+              <h3 className="text-white font-semibold mb-4">SOPORTE</h3>
               <ul className="space-y-2 text-gray-300">
                 <li>
                   <Link href="#" className="hover:text-white transition-colors">

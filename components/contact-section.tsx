@@ -81,8 +81,8 @@ export function ContactSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-white">
-            Ponte en
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> contacto</span>
+            PONTE EN
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> CONTACTO</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             ¿Tienes preguntas? Nos encantaría escucharte. Envíanos un mensaje y te responderemos lo antes posible.
@@ -92,7 +92,7 @@ export function ContactSection() {
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           <Card className="bg-white/10 backdrop-blur-md border border-white/20">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-white">Envíanos un mensaje</CardTitle>
+              <CardTitle className="text-2xl font-bold text-white">ENVÍANOS UN MENSAJE</CardTitle>
               <CardDescription className="text-gray-300">
                 Completa el siguiente formulario y te responderemos en menos de 24 horas.
               </CardDescription>
@@ -220,14 +220,14 @@ export function ContactSection() {
           <div className="space-y-8">
             <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardContent className="p-8">
-                <h3 className="text-xl font-bold text-white mb-6">Información de contacto</h3>
+                <h3 className="text-xl font-bold text-white mb-6">INFORMACIÓN DE CONTACTO</h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Dirección</h4>
+                      <h4 className="text-white font-semibold mb-1">DIRECCIÓN</h4>
                       <p className="text-gray-300">
                         Avenida Hogar Inteligente 123
                         <br />
@@ -243,7 +243,7 @@ export function ContactSection() {
                       <Phone className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Teléfono</h4>
+                      <h4 className="text-white font-semibold mb-1">TELÉFONO</h4>
                       <p className="text-gray-300">+52 (333) 123-4567</p>
                       <p className="text-gray-400 text-sm">Lun-Vie 9AM-6PM EST</p>
                     </div>
@@ -254,7 +254,7 @@ export function ContactSection() {
                       <Mail className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Correo</h4>
+                      <h4 className="text-white font-semibold mb-1">CORREO</h4>
                       <p className="text-gray-300">soporte@hogarinteligente.com</p>
                       <p className="text-gray-400 text-sm">Respondemos en menos de 24 horas</p>
                     </div>
@@ -265,7 +265,7 @@ export function ContactSection() {
                       <Clock className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold mb-1">Horario de atención</h4>
+                      <h4 className="text-white font-semibold mb-1">HORARIO DE ATENCIÓN</h4>
                       <p className="text-gray-300">
                         Lunes a Viernes: 9:00 AM - 6:00 PM
                         <br />
@@ -281,7 +281,7 @@ export function ContactSection() {
 
             <Card className="bg-white/10 backdrop-blur-md border border-white/20">
               <CardContent className="p-8">
-                <h3 className="text-xl font-bold text-white mb-4">Soporte rápido</h3>
+                <h3 className="text-xl font-bold text-white mb-4">SOPORTE RÁPIDO</h3>
                 <p className="text-gray-300 mb-6">¿Necesitas ayuda inmediata? Revisa nuestros recursos o inicia un chat en vivo.</p>
                 <div className="space-y-3">
                   <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border border-white/20">

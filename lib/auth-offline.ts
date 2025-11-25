@@ -113,7 +113,7 @@ export const authOffline = {
 
     // Si hay conexión, intentar obtener datos del servidor
     try {
-      const response = await fetch("http://https://workspaceapi-b81x.onrender.com/auth/me", {
+      const response = await fetch("https://workspaceapi-b81x.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { Home, Settings, Smartphone, CreditCard, LogOut, Bell, Menu, X, User, HelpCircle, BarChart3 } from "lucide-react"
+import { Home, Settings, Smartphone, LogOut, Bell, Menu, X, User, HelpCircle, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { jwtDecode } from 'jwt-decode'
@@ -57,7 +57,6 @@ export function DashboardHeader({ userName, userRole }: DashboardHeaderProps) {
       return [
         { name: "Panel de Control", href: "/dashboard", icon: Home },
         { name: "Gestionar Escenarios", href: "/dashboard/environments", icon: Settings },
-        { name: "Planes y Facturación", href: "/dashboard/billing", icon: CreditCard },
       ]
     }
   }

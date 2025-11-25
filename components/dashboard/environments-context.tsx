@@ -94,7 +94,7 @@ export function EnvironmentsProvider({ userId, children }: { userId?: string | n
       // Si estamos offline, el interceptor de fetch guardará la petición en IndexedDB
       // Si estamos online, la petición se ejecutará normalmente
       try {
-        const res = await fetch(`http://https://workspaceapi-b81x.onrender.com/entornos/cambiar-estado/${envId}`, {
+        const res = await fetch(`https://workspaceapi-b81x.onrender.com/entornos/cambiar-estado/${envId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

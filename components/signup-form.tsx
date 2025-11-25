@@ -8,9 +8,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, Home, Mail, Lock, User, CalendarDays, Phone } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Eye, EyeOff, Home, Mail, Lock, User, CalendarDays, Phone, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+
+interface FieldErrors {
+  fullName?: string
+  email?: string
+  birthday?: string
+  phoneNumber?: string
+  password?: string
+  confirmPassword?: string
+  general?: string
+}
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -25,6 +36,7 @@ export function SignupForm() {
   })
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<FieldErrors>({})
   const router = useRouter()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,27 +45,148 @@ export function SignupForm() {
       ...prev,
       [name]: value,
     }))
+    // Limpiar el error del campo cuando el usuario empiece a escribir
+    if (errors[name as keyof FieldErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+        general: undefined,
+      }))
+    }
+  }
+
+  // Función para parsear errores del backend
+  const parseBackendErrors = (errorData: any): FieldErrors => {
+    const parsedErrors: FieldErrors = {}
+
+    // Errores de validación de Mongoose (ValidationError)
+    if (errorData.errors && typeof errorData.errors === 'object') {
+      const fullNameErrors: string[] = []
+      
+      Object.keys(errorData.errors).forEach((field) => {
+        const fieldError = errorData.errors[field]
+        const fieldName = mapBackendFieldToFormField(field)
+        
+        if (fieldName) {
+          const errorMessage = fieldError.message || fieldError.msg || `Error en ${field}`
+          
+          // Si es nombre o apellido, acumular los errores en un array
+          if (field === 'nombre' || field === 'apellido') {
+            fullNameErrors.push(errorMessage)
+          } else {
+            // Para otros campos, usar el mensaje directamente
+            // Si ya hay un error en ese campo, combinarlo
+            if (parsedErrors[fieldName]) {
+              parsedErrors[fieldName] = `${parsedErrors[fieldName]}. ${errorMessage}`
+            } else {
+              parsedErrors[fieldName] = errorMessage
+            }
+          }
+        }
+      })
+      
+      // Combinar errores de nombre y apellido en un solo mensaje
+      if (fullNameErrors.length > 0) {
+        parsedErrors.fullName = fullNameErrors.join('. ')
+      }
+      
+      return parsedErrors
+    }
+
+    // Error de duplicado (MongoDB E11000)
+    const errorMessage = errorData.message || errorData.error || ''
+    const errorString = JSON.stringify(errorData).toLowerCase()
+
+    // Detectar errores de duplicado
+    if (errorString.includes('duplicate') || errorString.includes('e11000')) {
+      if (errorString.includes('correo') || errorString.includes('email')) {
+        parsedErrors.email = 'Este correo electrónico ya está en uso'
+        return parsedErrors
+      } else if (errorString.includes('telefono') || errorString.includes('phone')) {
+        parsedErrors.phoneNumber = 'Este número de teléfono ya está en uso'
+        return parsedErrors
+      }
+    }
+
+    // Si hay un mensaje de error, intentar mapearlo a campos específicos
+    if (errorMessage) {
+      const lowerMessage = errorMessage.toLowerCase()
+
+      // Mapear errores comunes a campos específicos
+      if (lowerMessage.includes('nombre') || lowerMessage.includes('name')) {
+        parsedErrors.fullName = errorMessage
+      } else if (lowerMessage.includes('apellido') || lowerMessage.includes('lastname')) {
+        parsedErrors.fullName = errorMessage
+      } else if (lowerMessage.includes('correo') || lowerMessage.includes('email')) {
+        parsedErrors.email = errorMessage
+      } else if (lowerMessage.includes('telefono') || lowerMessage.includes('phone')) {
+        parsedErrors.phoneNumber = errorMessage
+      } else if (lowerMessage.includes('fecha') || lowerMessage.includes('cumpleaños') || lowerMessage.includes('birthday') || lowerMessage.includes('futuro')) {
+        parsedErrors.birthday = errorMessage
+      } else if (lowerMessage.includes('contraseña') || lowerMessage.includes('password') || lowerMessage.includes('caracteres no permitidos')) {
+        parsedErrors.password = errorMessage
+      } else {
+        parsedErrors.general = errorMessage
+      }
+    } else {
+      parsedErrors.general = 'Error al crear la cuenta. Por favor, intenta de nuevo.'
+    }
+
+    return parsedErrors
+  }
+
+  // Mapear campos del backend a campos del formulario
+  const mapBackendFieldToFormField = (backendField: string): keyof FieldErrors | null => {
+    const fieldMap: Record<string, keyof FieldErrors> = {
+      nombre: 'fullName',
+      apellido: 'fullName',
+      correo: 'email',
+      telefono: 'phoneNumber',
+      fechaCumpleanos: 'birthday',
+      contrasena: 'password',
+    }
+    return fieldMap[backendField] || null
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Limpiar errores previos
+    setErrors({})
+
+    // Validación de contraseñas
     if (formData.password !== formData.confirmPassword) {
-      alert("¡Las contraseñas no coinciden!")
+      setErrors({ confirmPassword: "¡Las contraseñas no coinciden!" })
       return
     }
+
+    // Validación de términos
     if (!agreeToTerms) {
-      alert("Por favor acepta los términos y condiciones")
+      setErrors({ general: "Por favor acepta los términos y condiciones" })
       return
     }
+
+    // Validación de nombre completo (debe tener nombre y apellido)
+    const fullNameTrimmed = formData.fullName.trim()
+    if (!fullNameTrimmed) {
+      setErrors({ fullName: "El nombre completo es requerido" })
+      return
+    }
+
+    // Separar nombre y apellido
+    const nameParts = fullNameTrimmed.split(" ").filter(part => part.length > 0)
+    if (nameParts.length < 2) {
+      setErrors({ fullName: "Por favor ingresa tu nombre y apellido" })
+      return
+    }
+
+    const nombre = nameParts[0]
+    const apellido = nameParts.slice(1).join(" ")
 
     setIsLoading(true)
 
-    // Separar nombre y apellido
-    const [nombre, ...rest] = formData.fullName.trim().split(" ")
-    const apellido = rest.join(" ") || " "
-
     try {
-      const response = await fetch("http://https://workspaceapi-b81x.onrender.com/users", {
+      const response = await fetch("https://workspaceapi-b81x.onrender.com/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -72,7 +205,9 @@ export function SignupForm() {
         data = await response.json()
       } catch (jsonError) {
         console.error('Error parseando JSON:', jsonError)
-        throw new Error("Error en la respuesta del servidor")
+        setErrors({ general: "Error en la respuesta del servidor" })
+        setIsLoading(false)
+        return
       }
 
       // Verificar si es una respuesta offline (independientemente del status code)
@@ -83,7 +218,11 @@ export function SignupForm() {
       }
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || "Error al crear usuario")
+        // Parsear errores del backend
+        const parsedErrors = parseBackendErrors(data)
+        setErrors(parsedErrors)
+        setIsLoading(false)
+        return
       }
 
       // Registro exitoso
@@ -96,7 +235,7 @@ export function SignupForm() {
         alert("Sin conexión a internet. El registro se guardará para sincronización posterior.")
         router.push("/")
       } else {
-        alert(error.message || "Error al registrar usuario")
+        setErrors({ general: error.message || "Error al registrar usuario" })
       }
     } finally {
       setIsLoading(false)
@@ -125,12 +264,20 @@ export function SignupForm() {
 
             <div className="space-y-2">
               <CardTitle className="text-2xl font-bold text-white">Crear Cuenta</CardTitle>
-              <CardDescription className="text-gray-300">Únete a SmartHome y comienza a automatizar</CardDescription>
+              <CardDescription className="text-gray-300">Únete a WorkSpace y comienza a automatizar</CardDescription>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Mensaje de error general */}
+              {errors.general && (
+                <Alert variant="destructive" className="bg-red-500/10 border-red-500/50 text-red-200">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{errors.general}</AlertDescription>
+                </Alert>
+              )}
+
               {/* Nombre completo */}
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-white font-medium">
@@ -145,11 +292,19 @@ export function SignupForm() {
                     placeholder="Ingresa tu nombre completo"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.fullName ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.fullName && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.fullName}
+                  </p>
+                )}
               </div>
 
               {/* Correo electrónico */}
@@ -166,11 +321,19 @@ export function SignupForm() {
                     placeholder="Ingresa tu correo electrónico"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.email && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               {/* Fecha de nacimiento */}
@@ -186,11 +349,19 @@ export function SignupForm() {
                     type="date"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.birthday ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.birthday && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.birthday}
+                  </p>
+                )}
               </div>
 
               {/* Número de teléfono */}
@@ -207,11 +378,19 @@ export function SignupForm() {
                     placeholder="Ingresa tu número de teléfono"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.phoneNumber ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.phoneNumber && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.phoneNumber}
+                  </p>
+                )}
               </div>
 
               {/* Contraseña */}
@@ -228,7 +407,9 @@ export function SignupForm() {
                     placeholder="Crea una contraseña"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <button
@@ -240,6 +421,12 @@ export function SignupForm() {
                   </button>
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
               {/* Confirmar Contraseña */}
@@ -256,7 +443,9 @@ export function SignupForm() {
                     placeholder="Confirma tu contraseña"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className="pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15"
+                    className={`pl-10 pr-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 hover:bg-white/15 ${
+                      errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+                    }`}
                     required
                   />
                   <button
@@ -268,6 +457,12 @@ export function SignupForm() {
                   </button>
                   <div className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               {/* Aceptar términos */}
@@ -328,7 +523,7 @@ export function SignupForm() {
         {/* Información adicional */}
         <div className="mt-8 text-center">
           <p className="text-gray-400 text-xs">
-            Al crear una cuenta, te unes a miles de usuarios que confían en SmartHome para sus necesidades de automatización.
+            Al crear una cuenta, te unes a miles de usuarios que confían en WorkSpace para sus necesidades de automatización.
           </p>
         </div>
       </div>

@@ -30,36 +30,58 @@ export function usePWA(): PWAState {
 
     // Registrar Service Worker
     const registerServiceWorker = async () => {
-      if ('serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.register('/sw.js', {
-            scope: '/',
-          });
+      // Verificar soporte de Service Workers
+      if (!('serviceWorker' in navigator)) {
+        console.warn('Service Workers no son compatibles con este navegador');
+        return;
+      }
 
-          setRegistration(registration);
+      // Verificar HTTPS en producción (requerido para Service Workers)
+      if (process.env.NODE_ENV === 'production' && 
+          window.location.protocol !== 'https:' && 
+          !window.location.hostname.includes('localhost') &&
+          !window.location.hostname.includes('127.0.0.1')) {
+        console.warn('Service Workers requieren HTTPS en producción');
+        return;
+      }
 
-          // Verificar actualizaciones
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  setIsUpdateAvailable(true);
-                }
-              });
-            }
-          });
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/',
+        });
 
-          // Escuchar mensajes del Service Worker
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'SW_UPDATE_AVAILABLE') {
-              setIsUpdateAvailable(true);
-            }
-          });
+        setRegistration(registration);
 
-          console.log('Service Worker registrado exitosamente');
-        } catch (error) {
-          console.error('Error registrando Service Worker:', error);
+        // Verificar actualizaciones
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                setIsUpdateAvailable(true);
+              }
+            });
+          }
+        });
+
+        // Escuchar mensajes del Service Worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data && event.data.type === 'SW_UPDATE_AVAILABLE') {
+            setIsUpdateAvailable(true);
+          }
+        });
+
+        console.log('✅ Service Worker registrado exitosamente');
+        
+        // Verificar si el service worker está activo
+        if (registration.active) {
+          console.log('✅ Service Worker activo y funcionando');
+        }
+      } catch (error) {
+        console.error('❌ Error registrando Service Worker:', error);
+        // En móviles, algunos errores pueden ser silenciosos, así que los logueamos
+        if (error instanceof Error) {
+          console.error('Detalles del error:', error.message);
         }
       }
     };
